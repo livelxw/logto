@@ -1,19 +1,9 @@
 import type { ConnectorMetadata } from '@logto/connector-kit';
-import { ConnectorPlatform, ConnectorConfigFormItemType } from '@logto/connector-kit';
-
-export const authorizationEndpoint = 'wechat://'; // This is used to arouse the native WeChat App
-export const accessTokenEndpoint = 'https://api.weixin.qq.com/sns/oauth2/access_token';
-export const userInfoEndpoint = 'https://api.weixin.qq.com/sns/userinfo';
-export const scope = 'snsapi_userinfo';
-
-// See https://developers.weixin.qq.com/doc/oplatform/Return_codes/Return_code_descriptions_new.html to know more about WeChat response error code
-export const invalidAuthCodeErrcode = [40_029, 40_163, 42_003];
-
-export const invalidAccessTokenErrcode = [40_001, 40_014];
+import { ConnectorConfigFormItemType, ConnectorPlatform } from '@logto/connector-kit';
 
 export const defaultMetadata: ConnectorMetadata = {
   id: 'wechat-mini',
-  target: 'wechat',
+  target: 'wechat-mini',
   platform: ConnectorPlatform.Universal,
   name: {
     en: 'WeChat mini program',
@@ -47,12 +37,18 @@ export const defaultMetadata: ConnectorMetadata = {
     },
     {
       key: 'mode',
-      label: 'Mode',
+      label: 'Identifier Mode',
       required: false,
       type: ConnectorConfigFormItemType.Select,
       selectItems: [
-        { title: 'openid', value: 'openid' },
-        { title: 'unionid', value: 'unionid' },
+        {
+          title: 'Open ID',
+          value: 'openid',
+        },
+        {
+          title: 'Union ID',
+          value: 'unionid',
+        },
       ],
       defaultValue: 'openid',
     },
