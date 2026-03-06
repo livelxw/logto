@@ -76,13 +76,13 @@ const getUserInfo =
       throw new ConnectorError(ConnectorErrorCodes.SocialAuthCodeInvalid, parsed.errmsg);
     }
 
-    const { openid, unionid, session_key } = parsed as { openid: string; unionid: string, session_key: string };
+    const { openid, unionid } = parsed as { openid: string; unionid: string };
     switch (mode) {
       case 'openid': {
-        return { id: openid, session_key: session_key};
+        return { id: openid};
       }
       case 'unionid': {
-        return { id: unionid, session_key: session_key };
+        return { id: unionid };
       }
     }
   };
