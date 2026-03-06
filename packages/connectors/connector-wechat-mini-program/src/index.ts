@@ -2,18 +2,16 @@ import { z } from 'zod';
 
 import type {
   CreateConnector,
-  GetAuthorizationUri,
   GetConnectorConfig,
+  GetAuthorizationUri,
   GetUserInfo,
   SocialConnector,
 } from '@logto/connector-kit';
-
 import { ConnectorError, ConnectorErrorCodes, ConnectorType } from '@logto/connector-kit';
 
 import { defaultMetadata } from './constant.js';
-
-import type { WechatMiniConfig } from './types.js';
-import { wechatMiniConfigGuard } from './types.js';
+import type { WechatMiniProgramConfig } from './types.js';
+import { wechatMiniProgramConfigGuard } from './types.js';
 /**
  * WeChat mini program code to session endpoint.
  */
@@ -43,7 +41,18 @@ const userInfoData = z.object({
 /**
  * WeChat mini program connector get authorization URL.
  */
-const getAuthorizationUri: GetAuthorizationUri = async (payload) => payload.redirectUri;
+
+const getAuthorizationUri: GetAuthorizationUri =
+  (getConfig: GetConnectorConfig): GetAuthorizationUri =>
+  async ({ state, redirectUri }) => {
+    const config = await getConfig(defaultMetadata.id);
+    const queryParameters = new URLSearchParams({
+      redirect_uri: encodeURI(redirectUri), // The variable `redirectUri` should match {appId, appSecret}
+      state: state
+    });
+
+    return `${config.mockAuthorizationEndpoint}?${queryParameters.toString()}`;
+  };
 
 /**
  * Create WeChat mini program `getUserInfo` function.
@@ -57,7 +66,7 @@ const getUserInfo =
     }
 
     const { code } = result.data;
-    const { appId, appSecret, mode } = (await getConfig(defaultMetadata.id)) as WechatMiniConfig;
+    const { appId, appSecret, mode } = (await getConfig(defaultMetadata.id)) as WechatMiniProgramConfig;
     const url = `${codeToSessionEndpoint}?appid=${appId}&secret=${appSecret}&js_code=${code}&grant_type=authorization_code`;
 
     const res = await fetch(url, { method: 'GET' }).then(async (res) => res.json());
@@ -67,13 +76,13 @@ const getUserInfo =
       throw new ConnectorError(ConnectorErrorCodes.SocialAuthCodeInvalid, parsed.errmsg);
     }
 
-    const { openid, unionid } = parsed as { openid: string; unionid: string };
+    const { openid, unionid, session_key } = parsed as { openid: string; unionid: string, session_key: string };
     switch (mode) {
       case 'openid': {
-        return { id: openid };
+        return { id: openid, session_key: session_key};
       }
       case 'unionid': {
-        return { id: unionid };
+        return { id: unionid, session_key: session_key };
       }
     }
   };
@@ -86,7 +95,7 @@ const createWeChatMiniProgramConnector: CreateConnector<SocialConnector> = async
 }) => ({
   type: ConnectorType.Social,
   metadata: defaultMetadata,
-  configGuard: wechatMiniConfigGuard,
+  configGuard: wechatMiniProgramConfigGuard,
   getAuthorizationUri: getAuthorizationUri(getConfig),
   getUserInfo: getUserInfo(getConfig),
 });

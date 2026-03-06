@@ -3061,7 +3061,7 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(@types/debug@4.1.12)(@types/node@22.14.1)(jiti@1.21.0)(jsdom@26.0.0)(lightningcss@1.25.1)(sass@1.77.8)(yaml@2.4.5)
 
-  packages/connectors/connector-wechat-mini:
+  packages/connectors/connector-wechat-mini-program:
     dependencies:
       '@logto/connector-kit':
         specifier: workspace:^

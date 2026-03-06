@@ -2,14 +2,14 @@ import type { ConnectorMetadata } from '@logto/connector-kit';
 import { ConnectorConfigFormItemType, ConnectorPlatform } from '@logto/connector-kit';
 
 export const defaultMetadata: ConnectorMetadata = {
-  id: 'wechat-mini',
-  target: 'wechat-mini',
-  platform: ConnectorPlatform.Universal,
+  id: 'wechat-mini-program',
+  target: 'wechat',
+  platform: ConnectorPlatform.Native,
   name: {
-    en: 'WeChat mini program',
-    'zh-CN': '微信小程序',
-    'tr-TR': 'WeChat mini program',
-    ko: 'WeChat mini program',
+    en: 'WeChat',
+    'zh-CN': '微信',
+    'tr-TR': 'WeChat',
+    ko: 'WeChat',
   },
   logo: './logo.svg',
   logoDark: null,
@@ -51,6 +51,13 @@ export const defaultMetadata: ConnectorMetadata = {
         },
       ],
       defaultValue: 'openid',
+    },
+    {
+      key: 'mockAuthorizationEndpoint',
+      label: 'Mock Authorization Endpoint',
+      required: true,
+      type: ConnectorConfigFormItemType.Text,
+      placeholder: '<endpoint>',
     },
   ],
 };
